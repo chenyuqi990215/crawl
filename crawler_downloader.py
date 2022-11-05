@@ -94,7 +94,7 @@ def working():
         for tropes in current_tropes:
             if tropes in total_candidates:
                 candidate_tropes.append(tropes)
-            elif len(tropes.split('/')) == 1:
+            elif len(tropes.split('/')) == 1 and crawler_functions.check_tropes(tropes):
                 filter_tropes.append(tropes)
 
         current_tropes = deepcopy(filter_tropes)

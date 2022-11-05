@@ -44,6 +44,10 @@ def download_page_source(title, namespace="Main", delay=0, logging=None):
     return source
 
 
+def check_tropes(tropes):
+    return tropes.isalpha() and tropes[0].isupper()
+
+
 def candidates(subindex):
     candidates_index = []
     for i in range(26):
