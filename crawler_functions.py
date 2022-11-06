@@ -97,6 +97,11 @@ def check_not_found(page_src):
             return True
         return False
 
+def check_redirect(page_src):
+    if '<span style="font-family:Courier, \'Courier New\', monospace">[[redirect:' in page_src:
+        return True, page_src.split('[')[-1].split(']')[0].split(':')[-1]
+    else:
+        return False, None
 
 def catch_exception(exception, current_tropes, subindex, logging):
     if exception in current_tropes:
