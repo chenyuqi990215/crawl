@@ -43,6 +43,7 @@ def working():
         data = open('checked_missed_tropes.txt', 'r').readlines()
         for line in data:
             subindex_list.append(line.strip())
+            trope_list.append(line.strip())
 
     while len(subindex_list) > 0:
         subindex = subindex_list.popleft()
