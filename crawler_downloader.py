@@ -75,7 +75,7 @@ def working():
         for page_subindex in current_page_subindex_list:
             if page_subindex in total_candidates:
                 candidate_subindex_list.append(page_subindex)
-            elif len(page_subindex.split('/')) == 1:
+            elif len(page_subindex.split('/')) == 1 and crawler_functions.check_tropes(page_subindex):
                 filter_page_subindexes_list.append(page_subindex)
 
         current_page_subindex_list = deepcopy(filter_page_subindexes_list)

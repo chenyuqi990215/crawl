@@ -23,6 +23,9 @@ def sanitize_link(link_txt):
     link_txt = link_txt.replace(':', '')
     link_txt = link_txt.replace('\'\'\'', '')
     link_txt = link_txt.replace('\'\'', '')
+    link_txt = link_txt.replace('&quot;', '')
+    link_txt = link_txt.replace(',', '')
+    link_txt = link_txt.replace('.', '')
     # only the first word
     try:
         link_txt = link_txt.split()[0]
@@ -70,7 +73,10 @@ def get_subindexes_from_index(page_src):
 
 
 def get_tropes_from_page(page_src):
-    page_src = page_src.split('----')[1]
+    try:
+        page_src = page_src.split('----')[1]
+    except IndexError:
+        return None
 
     if "!!Examples:" in page_src:  # remove Examples
         return []
@@ -84,6 +90,11 @@ def check_not_found(page_src):
     if '<span style="font-family:Courier, \'Courier New\', monospace">Couldn\'t get page source.</span>' in page_src:
         return True
     else:
+        if '<br>' not in page_src:
+            return True
+        page_lines = page_src.split('<br>')
+        if 'may refer to:' in page_lines[0]:
+            return True
         return False
 
 
