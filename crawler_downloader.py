@@ -76,7 +76,7 @@ def working():
             error_log.info(f'Not found error: {subindex}')
         elif crawler_functions.check_redirect(page_src, only_score=True):
             redirect_list.append(subindex)
-            redirect_index = crawler_functions.get_redirect_index(page_src, only_score=False)
+            redirect_index = crawler_functions.check_redirect(page_src, only_score=False)
             with open('checked_redirected_trope_list.txt', 'w+') as output_trope_list:
                 redirect_log.info(f'Redirect Found: {subindex} Redirect To {redirect_index}')
                 redirect_list = list(set(redirect_list))
