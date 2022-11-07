@@ -16,8 +16,10 @@ URL_QUERY = "?action=source"
 def sanitize_link(link_txt):
     # + shows a specific bullet
     link_txt = link_txt.replace('+ ', '')
+    link_txt = link_txt.replace('+', '')
     # * is another kind of bullet
     link_txt = link_txt.replace('* ', '')
+    link_txt = link_txt.replace('*', '')
     # no parenthesis, colons or triple-apostrophes
     link_txt = link_txt.replace('[[', '').replace(']]', '')
     link_txt = link_txt.replace('{{', '').replace('}}', '')
@@ -84,7 +86,7 @@ def get_subindexes_from_index(page_src):
     subindexes_from_page = []
     size = len(paragraph_list)
     for i in range(0, size):
-        subindexes_from_page.extend(get_tropes_from_paragraph(paragraph_list, i))
+        subindexes_from_page.extend(get_subindexes_from_paragraph(paragraph_list, i))
 
     return subindexes_from_page
 

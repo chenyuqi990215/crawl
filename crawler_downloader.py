@@ -18,6 +18,7 @@ import pickle
 general_log = crawler_functions.get_logger('Tropes_log')
 error_log = crawler_functions.get_logger('Tropes_error')
 candidate_log = crawler_functions.get_logger('Tropes_candidate')
+redirect_log = crawler_functions.get_logger('Tropes_redirect')
 
 @retry(stop_max_attempt_number=10000)
 def working():
@@ -34,12 +35,18 @@ def working():
         data = open('checked_trope_list.txt', 'r').readlines()
         for line in data:
             checked_trope_list.append(line.strip())
+        redirect_list = []
+        data = open('checked_redirected_trope_list.txt', 'r').readlines()
+        for line in data:
+            redirect_list.append(line.strip())
+
     else:
         subindex_list = collections.deque()
         closed_data = set()
         subindex_list.append('Tropes')
         trope_list = []
         checked_trope_list = []
+        redirect_list = []
         data = open('checked_missed_tropes.txt', 'r').readlines()
         for line in data:
             subindex_list.append(line.strip())
@@ -62,6 +69,12 @@ def working():
 
         if crawler_functions.check_not_found(page_src):
             error_log.info(f'Not found error: {subindex}')
+        elif crawler_functions.check_redirect(page_src):
+            redirect_list.append(subindex)
+            with open('checked_redirected_trope_list.txt', 'w') as output_trope_list:
+                redirect_log.info(f'Redirect Found: {subindex}')
+                redirect_list = list(set(redirect_list))
+                output_trope_list.write('\n'.join(sorted(redirect_list)))
         else:
             checked_trope_list.append(subindex)
             with open('checked_trope_list.txt', 'w') as output_trope_list:
