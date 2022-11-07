@@ -19,6 +19,7 @@ general_log = crawler_functions.get_logger('Tropes_log')
 error_log = crawler_functions.get_logger('Tropes_error')
 candidate_log = crawler_functions.get_logger('Tropes_candidate')
 redirect_log = crawler_functions.get_logger('Tropes_redirect')
+link_log = crawler_functions.get_logger('Tropes_link')
 
 @retry(stop_max_attempt_number=10000)
 def working():
@@ -43,17 +44,18 @@ def working():
     else:
         subindex_list = collections.deque()
         closed_data = set()
-        subindex_list.append('Tropes')
+        subindex_list.append(('Tropes', ['Tropes']))
         trope_list = []
         checked_trope_list = []
         redirect_list = []
         data = open('checked_missed_tropes.txt', 'r').readlines()
         for line in data:
-            subindex_list.append(line.strip())
+            subindex_list.append((line.strip(), [line.strip()]))
             trope_list.append(line.strip())
 
     while len(subindex_list) > 0:
-        subindex = subindex_list.popleft()
+        subindex, path = subindex_list.popleft()
+        link_log.info(f'{subindex}: {"->".join(path)}')
         if subindex in closed_data:
             continue
 
@@ -93,7 +95,8 @@ def working():
             if page_subindex in total_candidates:
                 candidate_subindex_list.append(page_subindex)
             elif len(page_subindex.split('/')) == 1 and crawler_functions.check_tropes(page_subindex):
-                filter_page_subindexes_list.append(page_subindex)
+                filter_page_subindexes_list.append((page_subindex,
+                                                    deepcopy(path).append(page_subindex)))
 
         current_page_subindex_list = deepcopy(filter_page_subindexes_list)
         
@@ -117,7 +120,7 @@ def working():
         current_tropes = deepcopy(filter_tropes)
 
         for tropes in current_tropes:
-            subindex_list.append(tropes)
+            subindex_list.append((tropes, deepcopy(path).append(tropes)))
 
         if len(candidate_tropes) > 0:
             candidate_log.info(f"Candidate Tropes: {subindex} -> {','.join(candidate_tropes)}")
