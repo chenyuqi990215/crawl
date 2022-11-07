@@ -52,10 +52,13 @@ def working():
         for line in data:
             subindex_list.append((line.strip(), [line.strip()]))
             trope_list.append(line.strip())
+        open('tropes_list.txt', 'w+')
+        open('checked_trope_list.txt', 'w+')
+        open('checked_redirected_trope_list.txt', 'w+')
 
     while len(subindex_list) > 0:
         subindex, path = subindex_list.popleft()
-        link_log.info(f'{subindex}: {"->".join(path)}')
+        link_log.info(f'{subindex}: {" -> ".join(path)}')
         if subindex in closed_data:
             continue
 
@@ -71,10 +74,11 @@ def working():
 
         if crawler_functions.check_not_found(page_src):
             error_log.info(f'Not found error: {subindex}')
-        elif crawler_functions.check_redirect(page_src):
+        elif crawler_functions.check_redirect(page_src, only_score=True):
             redirect_list.append(subindex)
-            with open('checked_redirected_trope_list.txt', 'w') as output_trope_list:
-                redirect_log.info(f'Redirect Found: {subindex}')
+            redirect_index = crawler_functions.get_redirect_index(page_src, only_score=False)
+            with open('checked_redirected_trope_list.txt', 'w+') as output_trope_list:
+                redirect_log.info(f'Redirect Found: {subindex} Redirect To {redirect_index}')
                 redirect_list = list(set(redirect_list))
                 output_trope_list.write('\n'.join(sorted(redirect_list)))
         else:
@@ -95,8 +99,8 @@ def working():
             if page_subindex in total_candidates:
                 candidate_subindex_list.append(page_subindex)
             elif len(page_subindex.split('/')) == 1 and crawler_functions.check_tropes(page_subindex):
-                filter_page_subindexes_list.append((page_subindex,
-                                                    deepcopy(path).append(page_subindex)))
+                new_path = deepcopy(path) + [page_subindex]
+                filter_page_subindexes_list.append((page_subindex, deepcopy(new_path)))
 
         current_page_subindex_list = deepcopy(filter_page_subindexes_list)
         
@@ -120,7 +124,8 @@ def working():
         current_tropes = deepcopy(filter_tropes)
 
         for tropes in current_tropes:
-            subindex_list.append((tropes, deepcopy(path).append(tropes)))
+            new_path = deepcopy(path) + [tropes]
+            subindex_list.append((tropes, deepcopy(new_path)))
 
         if len(candidate_tropes) > 0:
             candidate_log.info(f"Candidate Tropes: {subindex} -> {','.join(candidate_tropes)}")
