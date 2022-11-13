@@ -24,7 +24,7 @@ link_log = crawler_functions.get_logger('Tropes_link')
 @retry(stop_max_attempt_number=10000)
 def working():
     error_log.info("Retrying...")
-    # restore information
+    # Restore information
     if os.path.exists('checked_queue_tropes.pkl'):
         subindex_list = pickle.load(open('checked_queue_tropes.pkl', 'rb'))
         closed_data = pickle.load(open('checked_set_tropes.pkl', 'rb'))
